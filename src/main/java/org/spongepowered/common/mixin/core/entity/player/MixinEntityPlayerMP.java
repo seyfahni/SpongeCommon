@@ -98,6 +98,8 @@ import org.spongepowered.api.event.cause.entity.spawn.SpawnCause;
 import org.spongepowered.api.event.entity.MoveEntityEvent;
 import org.spongepowered.api.event.entity.living.humanoid.ChangeGameModeEvent;
 import org.spongepowered.api.event.item.inventory.InteractInventoryEvent;
+import org.spongepowered.api.event.message.MessageChannelEvent;
+import org.spongepowered.api.event.message.MessageEvent;
 import org.spongepowered.api.item.inventory.Carrier;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.type.CarriedInventory;
@@ -772,5 +774,23 @@ public abstract class MixinEntityPlayerMP extends MixinEntityPlayer implements P
     @Override
     public Inventory getEnderChestInventory() {
         return (Inventory) this.theInventoryEnderChest;
+    }
+
+    public MessageChannelEvent.Chat simulateChat(Text message) {
+        checkNotNull(message, "message");
+
+        TextComponentTranslation component = new TextComponentTranslation("chat.type.text", SpongeTexts.toComponent(this.getDisplayNameText()),
+                SpongeTexts.toComponent(message));
+        final Text[] messages = SpongeTexts.splitChatMessage(component);
+
+        final MessageChannel originalChannel = this.getMessageChannel();
+        final MessageChannelEvent.Chat event = SpongeEventFactory.createMessageChannelEventChat(
+                Cause.of(NamedCause.source(this)), originalChannel, Optional.of(originalChannel),
+                new MessageEvent.MessageFormatter(messages[0], messages[1]), message, false
+        );
+        if (!SpongeImpl.postEvent(event) && !event.isMessageCancelled()) {
+            event.getChannel().ifPresent(channel -> channel.send(this, event.getMessage(), ChatTypes.CHAT));
+        }
+        return event;
     }
 }
