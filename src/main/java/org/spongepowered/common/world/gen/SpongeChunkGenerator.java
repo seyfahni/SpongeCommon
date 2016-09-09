@@ -60,6 +60,7 @@ import org.spongepowered.api.event.world.chunk.PopulateChunkEvent;
 import org.spongepowered.api.world.biome.BiomeGenerationSettings;
 import org.spongepowered.api.world.biome.BiomeType;
 import org.spongepowered.api.world.biome.GroundCoverLayer;
+import org.spongepowered.api.world.biome.VirtualBiomeType;
 import org.spongepowered.api.world.extent.Extent;
 import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
@@ -78,8 +79,8 @@ import org.spongepowered.common.interfaces.world.biome.IBiomeGenBase;
 import org.spongepowered.common.interfaces.world.gen.IChunkProviderOverworld;
 import org.spongepowered.common.interfaces.world.gen.IFlaggedPopulator;
 import org.spongepowered.common.interfaces.world.gen.IGenerationPopulator;
-import org.spongepowered.common.util.gen.ByteArrayMutableBiomeBuffer;
 import org.spongepowered.common.util.gen.ChunkPrimerBuffer;
+import org.spongepowered.common.util.gen.VirtualMutableBiomeBuffer;
 import org.spongepowered.common.world.extent.SoftBufferExtentViewDownsize;
 import org.spongepowered.common.world.gen.populators.SnowPopulator;
 
@@ -106,7 +107,7 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
     protected List<Populator> pop;
     protected Map<BiomeType, BiomeGenerationSettings> biomeSettings;
     protected final World world;
-    private final ByteArrayMutableBiomeBuffer cachedBiomes;
+    private final VirtualMutableBiomeBuffer cachedBiomes;
 
     protected Random rand;
     private NoiseGeneratorPerlin noise4;
@@ -121,8 +122,7 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
         this.biomeGenerator = checkNotNull(biomegen, "biomeGenerator");
 
         // Make initially empty biome cache
-        this.cachedBiomes = new ByteArrayMutableBiomeBuffer(Vector2i.ZERO, CHUNK_AREA);
-        this.cachedBiomes.detach();
+        this.cachedBiomes = new VirtualMutableBiomeBuffer(Vector2i.ZERO, CHUNK_AREA);
 
         this.genpop = Lists.newArrayList();
         this.pop = Lists.newArrayList();
@@ -203,10 +203,18 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
 
     @Override
     public BiomeGenerationSettings getBiomeSettings(BiomeType type) {
-        if (!this.biomeSettings.containsKey(type)) {
-            this.biomeSettings.put(type, ((IBiomeGenBase) type).initPopulators(this.world));
+        checkNotNull(type);
+        BiomeGenerationSettings settings = this.biomeSettings.get(type);
+        if (settings == null) {
+            if (type instanceof VirtualBiomeType) {
+                settings = ((VirtualBiomeType) type).getDefaultGenerationSettings().copy();
+                this.biomeSettings.put(type, settings);
+            } else {
+                settings = ((IBiomeGenBase) type).initPopulators(this.world);
+                this.biomeSettings.put(type, settings);
+            }
         }
-        return this.biomeSettings.get(type);
+        return settings;
     }
 
     @Override
@@ -264,8 +272,7 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
 
         // Assemble chunk
         Chunk chunk = new Chunk(this.world, chunkprimer, chunkX, chunkZ);
-        byte[] biomeArray = chunk.getBiomeArray();
-        System.arraycopy(this.cachedBiomes.detach(), 0, biomeArray, 0, biomeArray.length);
+        this.cachedBiomes.fill(chunk.getBiomeArray());
         chunk.generateSkylightMap();
         return chunk;
     }

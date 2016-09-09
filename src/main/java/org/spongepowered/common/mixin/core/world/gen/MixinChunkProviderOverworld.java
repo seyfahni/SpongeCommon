@@ -46,6 +46,8 @@ import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.event.cause.Cause;
 import org.spongepowered.api.util.weighted.VariableAmount;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.biome.BiomeType;
+import org.spongepowered.api.world.biome.VirtualBiomeType;
 import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBiomeArea;
 import org.spongepowered.api.world.extent.MutableBlockVolume;
@@ -66,8 +68,8 @@ import org.spongepowered.common.SpongeImpl;
 import org.spongepowered.common.interfaces.world.gen.IChunkProviderOverworld;
 import org.spongepowered.common.interfaces.world.gen.IPopulatorProvider;
 import org.spongepowered.common.util.VecHelper;
-import org.spongepowered.common.util.gen.ByteArrayMutableBiomeBuffer;
 import org.spongepowered.common.util.gen.ChunkBufferPrimer;
+import org.spongepowered.common.util.gen.VirtualMutableBiomeBuffer;
 import org.spongepowered.common.world.gen.WorldGenConstants;
 import org.spongepowered.common.world.gen.populators.AnimalPopulator;
 import org.spongepowered.common.world.gen.populators.FilteredPopulator;
@@ -93,12 +95,13 @@ public abstract class MixinChunkProviderOverworld implements IChunkProvider, Gen
     @Shadow private StructureOceanMonument oceanMonumentGenerator;
     @Shadow private Biome[] biomesForGeneration;
 
-    @Shadow public abstract void setBlocksInChunk(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_);
+    @Shadow
+    public abstract void setBlocksInChunk(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_);
 
     private Cause cause = Cause.source(SpongeImpl.getPlugin()).build();
     private BiomeGenerator biomegen;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
+    @Inject(method = "<init>", at = @At("RETURN") )
     private void onConstruct(net.minecraft.world.World worldIn, long p_i45636_2_, boolean p_i45636_4_, String p_i45636_5_, CallbackInfo ci) {
         if (this.settings == null) {
             this.settings = new ChunkProviderSettings.Factory().build();
@@ -223,7 +226,7 @@ public abstract class MixinChunkProviderOverworld implements IChunkProvider, Gen
         // of the biomes that the terrain generator expects. While not an exact
         // reverse of the algorithm this should be accurate 99.997% of the time
         // (based on testing).
-        MutableBiomeArea buffer = new ByteArrayMutableBiomeBuffer(new Vector2i(x * 16 - 6, z * 16 - 6), new Vector2i(37, 37));
+        MutableBiomeArea buffer = new VirtualMutableBiomeBuffer(new Vector2i(x * 16 - 6, z * 16 - 6), new Vector2i(37, 37));
         this.biomegen.generateBiomes(buffer);
         if (this.biomesForGeneration == null || this.biomesForGeneration.length < 100) {
             this.biomesForGeneration = new Biome[100];
@@ -232,7 +235,11 @@ public abstract class MixinChunkProviderOverworld implements IChunkProvider, Gen
             int absX = bx + x * 16 - 6;
             for (int bz = 0; bz < 40; bz += 4) {
                 int absZ = bz + z * 16 - 6;
-                this.biomesForGeneration[(bx / 4) + (bz / 4) * 10] = (Biome) buffer.getBiome(absX, absZ);
+                BiomeType type = buffer.getBiome(absX, absZ);
+                if (type instanceof VirtualBiomeType) {
+                    type = ((VirtualBiomeType) type).getPersistedType();
+                }
+                this.biomesForGeneration[(bx / 4) + (bz / 4) * 10] = (Biome) type;
             }
         }
         return this.biomesForGeneration;
@@ -241,10 +248,11 @@ public abstract class MixinChunkProviderOverworld implements IChunkProvider, Gen
     /**
      * @author gabizou - February 1st, 2016
      *
-     * Redirects this method call to just simply return the current bimoes, as
-     * necessitated by @Deamon's changes. This avoids an overwrite entirely.
+     *         Redirects this method call to just simply return the current
+     *         bimoes, as necessitated by @Deamon's changes. This avoids an
+     *         overwrite entirely.
      */
-    @Redirect(method = "setBlocksInChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/BiomeProvider;getBiomesForGeneration([Lnet/minecraft/world/biome/Biome;IIII)[Lnet/minecraft/world/biome/Biome;"))
+    @Redirect(method = "setBlocksInChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/BiomeProvider;getBiomesForGeneration([Lnet/minecraft/world/biome/Biome;IIII)[Lnet/minecraft/world/biome/Biome;") )
     private Biome[] onSetBlocksGetBiomesIgnore(BiomeProvider manager, Biome[] biomes, int x, int z, int width, int height) {
         return biomes;
     }

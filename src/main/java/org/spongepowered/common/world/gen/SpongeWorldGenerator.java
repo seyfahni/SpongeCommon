@@ -32,6 +32,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.world.World;
 import org.spongepowered.api.world.biome.BiomeGenerationSettings;
 import org.spongepowered.api.world.biome.BiomeType;
+import org.spongepowered.api.world.biome.VirtualBiomeType;
 import org.spongepowered.api.world.gen.BiomeGenerator;
 import org.spongepowered.api.world.gen.GenerationPopulator;
 import org.spongepowered.api.world.gen.Populator;
@@ -39,7 +40,6 @@ import org.spongepowered.api.world.gen.WorldGenerator;
 import org.spongepowered.common.interfaces.world.biome.IBiomeGenBase;
 import org.spongepowered.common.interfaces.world.gen.IChunkProviderOverworld;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -129,13 +129,17 @@ public final class SpongeWorldGenerator implements WorldGenerator {
     @Override
     public BiomeGenerationSettings getBiomeSettings(BiomeType type) {
         checkNotNull(type);
-        if (!this.biomeSettings.containsKey(type)) {
-            if (!(this.biomeSettings instanceof HashMap)) {
-                this.biomeSettings = new HashMap<>(this.biomeSettings);
+        BiomeGenerationSettings settings = this.biomeSettings.get(type);
+        if (settings == null) {
+            if (type instanceof VirtualBiomeType) {
+                settings = ((VirtualBiomeType) type).getDefaultGenerationSettings().copy();
+                this.biomeSettings.put(type, settings);
+            } else {
+                settings = ((IBiomeGenBase) type).initPopulators(this.world);
+                this.biomeSettings.put(type, settings);
             }
-            this.biomeSettings.put(type, ((IBiomeGenBase) type).initPopulators(this.world));
         }
-        return this.biomeSettings.get(type);
+        return settings;
     }
 
     public Map<BiomeType, BiomeGenerationSettings> getBiomeSettings() {
