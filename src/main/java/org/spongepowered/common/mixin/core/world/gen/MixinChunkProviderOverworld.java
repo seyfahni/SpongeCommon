@@ -95,13 +95,12 @@ public abstract class MixinChunkProviderOverworld implements IChunkProvider, Gen
     @Shadow private StructureOceanMonument oceanMonumentGenerator;
     @Shadow private Biome[] biomesForGeneration;
 
-    @Shadow
-    public abstract void setBlocksInChunk(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_);
+    @Shadow public abstract void setBlocksInChunk(int p_180518_1_, int p_180518_2_, ChunkPrimer p_180518_3_);
 
     private Cause cause = Cause.source(SpongeImpl.getPlugin()).build();
     private BiomeGenerator biomegen;
 
-    @Inject(method = "<init>", at = @At("RETURN") )
+    @Inject(method = "<init>", at = @At("RETURN"))
     private void onConstruct(net.minecraft.world.World worldIn, long p_i45636_2_, boolean p_i45636_4_, String p_i45636_5_, CallbackInfo ci) {
         if (this.settings == null) {
             this.settings = new ChunkProviderSettings.Factory().build();
@@ -248,11 +247,10 @@ public abstract class MixinChunkProviderOverworld implements IChunkProvider, Gen
     /**
      * @author gabizou - February 1st, 2016
      *
-     *         Redirects this method call to just simply return the current
-     *         bimoes, as necessitated by @Deamon's changes. This avoids an
-     *         overwrite entirely.
+     * Redirects this method call to just simply return the current bimoes, as
+     * necessitated by @Deamon's changes. This avoids an overwrite entirely.
      */
-    @Redirect(method = "setBlocksInChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/BiomeProvider;getBiomesForGeneration([Lnet/minecraft/world/biome/Biome;IIII)[Lnet/minecraft/world/biome/Biome;") )
+    @Redirect(method = "setBlocksInChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/biome/BiomeProvider;getBiomesForGeneration([Lnet/minecraft/world/biome/Biome;IIII)[Lnet/minecraft/world/biome/Biome;"))
     private Biome[] onSetBlocksGetBiomesIgnore(BiomeProvider manager, Biome[] biomes, int x, int z, int width, int height) {
         return biomes;
     }

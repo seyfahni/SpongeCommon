@@ -232,11 +232,11 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
         this.rand.setSeed(chunkX * 341873128712L + chunkZ * 132897987541L);
         this.cachedBiomes.reuse(new Vector2i(chunkX * 16, chunkZ * 16));
         this.biomeGenerator.generateBiomes(this.cachedBiomes);
+        ImmutableBiomeArea biomeBuffer = this.cachedBiomes.getImmutableBiomeCopy();
 
         // Generate base terrain
         ChunkPrimer chunkprimer = new ChunkPrimer();
         MutableBlockVolume blockBuffer = new ChunkPrimerBuffer(chunkprimer, chunkX, chunkZ);
-        ImmutableBiomeArea biomeBuffer = this.cachedBiomes.getImmutableBiomeCopy();
         this.baseGenerator.populate((org.spongepowered.api.world.World) this.world, blockBuffer, biomeBuffer);
 
         if (!(this.baseGenerator instanceof SpongeGenerationPopulator)) {
@@ -289,6 +289,11 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
         long j1 = this.rand.nextLong() / 2L * 2L + 1L;
         this.rand.setSeed(chunkX * i1 + chunkZ * j1 ^ this.world.getSeed());
         BlockFalling.fallInstantly = true;
+
+        // Have to regeneate the biomes so that any virtual biomes can be passed to the populator.
+        this.cachedBiomes.reuse(new Vector2i(chunkX * 16, chunkZ * 16));
+        this.biomeGenerator.generateBiomes(this.cachedBiomes);
+        ImmutableBiomeArea biomeBuffer = this.cachedBiomes.getImmutableBiomeCopy();
 
         BlockPos blockpos = new BlockPos(chunkX * 16, 0, chunkZ * 16);
         BiomeType biome = (BiomeType) this.world.getBiome(blockpos.add(16, 0, 16));
@@ -346,9 +351,9 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
                         .complete());
             }
             if (populator instanceof IFlaggedPopulator) {
-                ((IFlaggedPopulator) populator).populate(volume, spongeWorld, this.rand, flags);
+                ((IFlaggedPopulator) populator).populate(volume, spongeWorld, this.rand, biomeBuffer, flags);
             } else {
-                populator.populate(spongeWorld, volume, this.rand);
+                populator.populate(spongeWorld, volume, this.rand, biomeBuffer);
             }
             if (Timings.isTimingsEnabled()) {
                 timing.stopTimingIfSync();

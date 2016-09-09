@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraft.world.gen.structure.MapGenVillage;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.common.interfaces.world.gen.IFlaggedPopulator;
 import org.spongepowered.common.world.gen.WorldGenConstants;
@@ -47,7 +48,7 @@ import java.util.Random;
 public abstract class MixinMapGenVillage extends MapGenStructure implements IFlaggedPopulator {
 
     @Override
-    public void populate(Extent extent, org.spongepowered.api.world.World worldIn, Random random, List<String> flags) {
+    public void populate(Extent extent, org.spongepowered.api.world.World worldIn, Random random, ImmutableBiomeArea virtualBiomes, List<String> flags) {
         Vector3i min = extent.getBlockMin();
         World world = (World) worldIn;
         boolean flag = generateStructure(world, random, new ChunkPos((min.getX() - 8) / 16, (min.getZ() - 8) / 16));

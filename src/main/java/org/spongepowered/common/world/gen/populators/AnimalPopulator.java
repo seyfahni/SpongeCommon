@@ -29,6 +29,7 @@ import net.minecraft.world.WorldEntitySpawner;
 import net.minecraft.world.biome.Biome;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.common.world.gen.InternalPopulatorTypes;
@@ -43,7 +44,7 @@ public class AnimalPopulator implements Populator {
     }
 
     @Override
-    public void populate(World world, Extent extent, Random random) {
+    public void populate(World world, Extent extent, Random random, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin();
         Vector3i size = extent.getBlockSize();
         Biome biomegenbase = (Biome) extent.getBiome(size.getX() / 2 + min.getX(), size.getZ() / 2 + min.getZ());

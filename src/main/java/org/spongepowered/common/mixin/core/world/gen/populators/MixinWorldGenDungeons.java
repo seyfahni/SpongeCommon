@@ -35,6 +35,7 @@ import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.util.weighted.LootTable;
 import org.spongepowered.api.util.weighted.VariableAmount;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.api.world.gen.PopulatorTypes;
 import org.spongepowered.api.world.gen.populator.Dungeon;
@@ -80,7 +81,7 @@ public abstract class MixinWorldGenDungeons extends WorldGenerator implements Du
     }
 
     @Override
-    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random) {
+    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin();
         Vector3i size = extent.getBlockSize();
         World world = (World) worldIn;

@@ -29,6 +29,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -54,7 +55,7 @@ public abstract class MixinMapGenStructure implements Populator {
     }
 
     @Override
-    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random) {
+    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin();
         World world = (World) worldIn;
         generateStructure(world, random, new ChunkPos((min.getX() - 8) / 16, (min.getZ() - 8) / 16));

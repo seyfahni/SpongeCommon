@@ -32,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenDesertWells;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.PopulatorObject;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.api.world.gen.PopulatorTypes;
@@ -75,7 +76,7 @@ public abstract class MixinWorldGenDesertWells extends WorldGenerator implements
     }
 
     @Override
-    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random) {
+    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin();
         Vector3i size = extent.getBlockSize();
         World world = (World) worldIn;

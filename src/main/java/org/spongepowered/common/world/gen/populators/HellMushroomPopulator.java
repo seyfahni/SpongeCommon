@@ -33,6 +33,7 @@ import org.spongepowered.api.util.weighted.ChanceTable;
 import org.spongepowered.api.util.weighted.VariableAmount;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.api.world.gen.PopulatorTypes;
 import org.spongepowered.api.world.gen.populator.Mushroom;
@@ -66,7 +67,7 @@ public class HellMushroomPopulator implements Mushroom {
     }
 
     @Override
-    public void populate(org.spongepowered.api.world.World world, Extent extent, Random random) {
+    public void populate(org.spongepowered.api.world.World world, Extent extent, Random random, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin();
         Vector3i size = extent.getBlockSize();
         BlockPos chunkPos = new BlockPos(min.getX(), min.getY(), min.getZ());

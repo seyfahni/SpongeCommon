@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeEndDecorator;
 import net.minecraft.world.gen.feature.WorldGenSpikes;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.Populator;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.common.util.VecHelper;
@@ -47,7 +48,7 @@ public class EndSpikePopulator implements Populator {
     }
 
     @Override
-    public void populate(org.spongepowered.api.world.World world, Extent extent, Random rand) {
+    public void populate(org.spongepowered.api.world.World world, Extent extent, Random rand, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin().sub(8,0,8);
         World worldIn = (World) world;
         WorldGenSpikes.EndSpike[] aworldgenspikes$endspike = BiomeEndDecorator.getSpikesForWorld(worldIn);

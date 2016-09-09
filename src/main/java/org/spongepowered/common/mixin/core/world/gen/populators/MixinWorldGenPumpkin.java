@@ -34,6 +34,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenPumpkin;
 import org.spongepowered.api.util.weighted.VariableAmount;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.api.world.gen.PopulatorTypes;
 import org.spongepowered.api.world.gen.populator.Pumpkin;
@@ -63,7 +64,7 @@ public class MixinWorldGenPumpkin implements Pumpkin {
     }
 
     @Override
-    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random) {
+    public void populate(org.spongepowered.api.world.World worldIn, Extent extent, Random random, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin();
         Vector3i size = extent.getBlockSize();
         World world = (World) worldIn;

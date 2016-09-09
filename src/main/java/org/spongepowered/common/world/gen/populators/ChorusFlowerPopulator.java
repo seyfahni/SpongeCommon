@@ -34,6 +34,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.NoiseGeneratorSimplex;
 import org.spongepowered.api.world.extent.Extent;
+import org.spongepowered.api.world.extent.ImmutableBiomeArea;
 import org.spongepowered.api.world.gen.PopulatorType;
 import org.spongepowered.api.world.gen.PopulatorTypes;
 import org.spongepowered.api.world.gen.populator.ChorusFlower;
@@ -63,7 +64,7 @@ public class ChorusFlowerPopulator implements ChorusFlower {
     }
 
     @Override
-    public void populate(org.spongepowered.api.world.World world, Extent extent, Random rand) {
+    public void populate(org.spongepowered.api.world.World world, Extent extent, Random rand, ImmutableBiomeArea virtualBiomes) {
         Vector3i min = extent.getBlockMin();
         Vector3i size = extent.getBlockSize();
         if (this.noise == null || world.getProperties().getSeed() != this.lastSeed) {

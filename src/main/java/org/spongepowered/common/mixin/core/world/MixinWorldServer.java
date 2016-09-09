@@ -367,9 +367,7 @@ public abstract class MixinWorldServer extends MixinWorld implements IMixinWorld
             ((IPopulatorProvider) newGenerator.getBaseGenerationPopulator()).addPopulators(newGenerator);
         }
 
-        System.out.println("Updating world generator for " + this.worldInfo.getWorldName());
         for (WorldGeneratorModifier modifier : this.getProperties().getGeneratorModifiers()) {
-            System.out.println("Running world modifier " + modifier);
             modifier.modifyWorldGenerator(this.getProperties(), generatorSettings, newGenerator);
         }
 
