@@ -107,7 +107,7 @@ public class SpongeChunkGenerator implements WorldGenerator, IChunkGenerator {
     protected List<Populator> pop;
     protected Map<BiomeType, BiomeGenerationSettings> biomeSettings;
     protected final World world;
-    private final VirtualMutableBiomeBuffer cachedBiomes;
+    protected final VirtualMutableBiomeBuffer cachedBiomes;
 
     protected Random rand;
     private NoiseGeneratorPerlin noise4;
