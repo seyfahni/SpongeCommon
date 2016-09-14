@@ -37,7 +37,7 @@ import org.spongepowered.api.text.format.TextFormat;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.common.interfaces.text.IMixinChatComponent;
+import org.spongepowered.common.interfaces.text.IMixinTextComponent;
 import org.spongepowered.common.interfaces.text.IMixinText;
 import org.spongepowered.common.text.action.SpongeClickAction;
 import org.spongepowered.common.text.action.SpongeHoverAction;
@@ -109,7 +109,7 @@ public abstract class MixinText implements IMixinText {
 
     @Override
     public String toPlain() {
-        return ((IMixinChatComponent) getHandle()).toPlain();
+        return ((IMixinTextComponent) getHandle()).toPlain();
     }
 
     @Override
@@ -123,12 +123,12 @@ public abstract class MixinText implements IMixinText {
 
     @Override
     public String getLegacyFormatting() {
-        return ((IMixinChatComponent) getHandle()).getLegacyFormatting();
+        return ((IMixinTextComponent) getHandle()).getLegacyFormatting();
     }
 
     @Override
     public String toLegacy(char code) {
-        return ((IMixinChatComponent) getHandle()).toLegacy(code);
+        return ((IMixinTextComponent) getHandle()).toLegacy(code);
     }
 
 }

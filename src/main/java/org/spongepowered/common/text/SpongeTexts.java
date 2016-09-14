@@ -32,7 +32,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
-import org.spongepowered.common.interfaces.text.IMixinChatComponent;
+import org.spongepowered.common.interfaces.text.IMixinTextComponent;
 import org.spongepowered.common.interfaces.text.IMixinText;
 
 import java.util.List;
@@ -76,11 +76,11 @@ public final class SpongeTexts {
     }
 
     public static Text toText(ITextComponent component) {
-        return ((IMixinChatComponent) component).toText();
+        return ((IMixinTextComponent) component).toText();
     }
 
     public static String toPlain(ITextComponent component) {
-        return ((IMixinChatComponent) component).toPlain();
+        return ((IMixinTextComponent) component).toPlain();
     }
 
     @SuppressWarnings("deprecation")
@@ -94,7 +94,7 @@ public final class SpongeTexts {
     }
 
     public static String toLegacy(ITextComponent component) {
-        return ((IMixinChatComponent) component).toLegacy(COLOR_CHAR);
+        return ((IMixinTextComponent) component).toLegacy(COLOR_CHAR);
     }
 
     @SuppressWarnings("unchecked")
@@ -106,7 +106,7 @@ public final class SpongeTexts {
             }
         }
 
-        TextComponentString result = new TextComponentString(((IMixinChatComponent) component).getLegacyFormatting());
+        TextComponentString result = new TextComponentString(((IMixinTextComponent) component).getLegacyFormatting());
         result.appendSibling(component);
         return result;
     }

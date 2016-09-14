@@ -42,7 +42,7 @@ import org.spongepowered.api.text.action.TextActions;
 import org.spongepowered.api.text.format.TextStyle;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.common.interfaces.text.IMixinChatComponent;
+import org.spongepowered.common.interfaces.text.IMixinTextComponent;
 import org.spongepowered.common.interfaces.text.IMixinClickEvent;
 import org.spongepowered.common.interfaces.text.IMixinHoverEvent;
 import org.spongepowered.common.text.ResolvedChatStyle;
@@ -53,7 +53,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @Mixin(TextComponentBase.class)
-public abstract class MixinTextComponentBase implements IMixinChatComponent {
+public abstract class MixinTextComponentBase implements IMixinTextComponent {
 
     @Shadow private Style style;
     @Shadow protected List<ITextComponent> siblings;
@@ -204,7 +204,7 @@ public abstract class MixinTextComponentBase implements IMixinChatComponent {
         }
 
         for (ITextComponent child : this.siblings) {
-            builder.append(((IMixinChatComponent) child).toText());
+            builder.append(((IMixinTextComponent) child).toText());
         }
 
         return builder.build();

@@ -81,3 +81,7 @@ dependencies {
 
 // Include API dependencies in our POM
 ext.shadedDevProject = api
+
+test {
+    workingDir = test.temporaryDir
+}
